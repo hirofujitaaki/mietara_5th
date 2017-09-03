@@ -7,8 +7,10 @@ GET     /                           controllers.ApplicationController.index
 GET     /signOut                    controllers.ApplicationController.signOut
 
 GET     /signUp                     controllers.SignUpController.view
+POST    /signUp                     controllers.SignInController.submit
 
 GET     /signIn                     controllers.SignInController.view
+POST    /signIn                     controllers.SignInController.submit
 
 GET     /password/change            controllers.ChangePasswordController.view
 
