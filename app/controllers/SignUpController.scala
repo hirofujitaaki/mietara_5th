@@ -63,6 +63,7 @@ class SignUpController @Inject() (
       form => Future.successful(BadRequest(views.html.signUp(form))),
       data => {
         val result = Redirect(routes.SignUpController.view()).flashing("info" -> Messages("sign.up.email.sent", data.email))
+        //loginInfor is essentially a (user ID, provider ID) tuple.
         val loginInfo = LoginInfo(CredentialsProvider.ID, data.email)
         userService.retrieve(loginInfo).flatMap {
           case Some(user) =>
