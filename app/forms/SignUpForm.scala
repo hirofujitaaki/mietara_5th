@@ -5,6 +5,8 @@ import play.api.data.Forms._
 
 /**
  * The form which handles the sign up process.
+ * A standalone object which works like a namespace.
+ * Now you can use it in a view file like (signInForm: Form[forms.SignInForm.Data])
  */
 object SignUpForm {
 
