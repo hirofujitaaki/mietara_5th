@@ -68,7 +68,7 @@ class ForgotPasswordController @Inject() (
                 bodyText = Some(views.txt.emails.resetPassword(user, url).body),
                 bodyHtml = Some(views.html.emails.resetPassword(user, url).body)
               ))
-              result // ?? why not Future.successful(result)
+              result //?? why not Future.successful(result)
             }
           case None => Future.successful(result)
         }
