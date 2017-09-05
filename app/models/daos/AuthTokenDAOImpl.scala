@@ -3,7 +3,7 @@ package models.daos
 import java.util.UUID
 
 import models.AuthToken
-import models.daos.AuthTokenDAOImpl._
+import models.daos.AuthTokenDAOImpl._ //?? what for?
 import org.joda.time.DateTime
 
 import scala.collection.mutable
@@ -60,6 +60,7 @@ class AuthTokenDAOImpl extends AuthTokenDAO {
 /**
  * The companion object.
  */
+//?? why create companion object separately?
 object AuthTokenDAOImpl {
 
   /**
