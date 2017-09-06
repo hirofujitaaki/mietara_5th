@@ -1,3 +1,5 @@
+// https://github.com/sbt/sbt-scalariform
+// https://github.com/scala-ide/scalariform
 import com.typesafe.sbt.SbtScalariform._
 
 import scalariform.formatter.preferences._
@@ -54,7 +56,6 @@ scalacOptions ++= Seq(
 
 //********************************************************
 // Scalariform settings
-//?? https://github.com/scala-ide/scalariform
 //********************************************************
 
 defaultScalariformSettings
