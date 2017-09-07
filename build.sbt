@@ -1,7 +1,6 @@
 // https://github.com/sbt/sbt-scalariform
 // https://github.com/scala-ide/scalariform
 import com.typesafe.sbt.SbtScalariform._
-
 import scalariform.formatter.preferences._
 
 name := """play-scala"""
@@ -9,6 +8,9 @@ name := """play-scala"""
 version := "1.0-SNAPSHOT"
 
 scalaVersion := "2.11.11"
+
+// enables to use repositories besides MavenCentral
+resolvers += Resolver.jcenterRepo
 
 libraryDependencies ++= Seq(
   "com.mohiva" %% "play-silhouette" % "4.0.0",
@@ -26,9 +28,9 @@ libraryDependencies ++= Seq(
   "com.h2database" % "h2" % "1.3.176",
   "com.typesafe.play" %% "play-slick" % "2.0.0",
   "com.typesafe.play" %% "play-slick-evolutions" % "2.0.0",
-  "com.github.tototoshi" %% "slick-joda-mapper" % "2.2.0", //??
-  "joda-time" % "joda-time" % "2.7", //??
-  "org.joda" % "joda-convert" % "1.7", //??
+  "com.github.tototoshi" %% "slick-joda-mapper" % "2.2.0",
+  "joda-time" % "joda-time" % "2.7",
+  "org.joda" % "joda-convert" % "1.7",
   specs2 % Test,
   cache,
   filters
@@ -36,9 +38,11 @@ libraryDependencies ++= Seq(
 
 lazy val root = (project in file(".")).enablePlugins(PlayScala)
 
+// almost default.
 routesGenerator := InjectedRoutesGenerator
 
-//?? http://qiita.com/srd7/items/ee2098d7cebc50ae0e01
+// enables to use UUID type in routes file.
+// http://qiita.com/srd7/items/ee2098d7cebc50ae0e01
 routesImport += "utils.route.Binders._"
 
 scalacOptions ++= Seq(

@@ -1,3 +1,12 @@
+// https://stackoverflow.com/questions/26292073/whats-the-difference-between-maven-plugins-and-dependencies
+// https://stackoverflow.com/questions/33771269/what-is-the-difference-between-plugins-dependencies-modules-and-sub-projects-i
+// https://stackoverflow.com/questions/11881663/what-is-the-difference-in-maven-between-dependency-and-plugin-tags-in-pom-xml
+/* Dependencies are libraries, more strictly, they are jar files(a fancy name of a zip file
+ * that contains java classes) and will be added to the classpath while executing the task.
+ * A plugin however is an artifact that you can configure in your project to have it actually
+ * do something during the build of your project.
+ */
+
 // Comment to get more information during initialization
 logLevel := Level.Warn
 
