@@ -1,4 +1,4 @@
-package controllers
+package controllers.auth
 
 import javax.inject.Inject
 
@@ -9,13 +9,14 @@ import com.mohiva.play.silhouette.api.repositories.AuthInfoRepository
 import com.mohiva.play.silhouette.api.util.{ Clock, Credentials }
 import com.mohiva.play.silhouette.impl.exceptions.IdentityNotFoundException
 import com.mohiva.play.silhouette.impl.providers._
-import forms.SignInForm
+import controllers.{ WebJarAssets, auth, pages }
+import forms.auth.SignInForm
 import models.services.UserService
 import net.ceedubs.ficus.Ficus._
 import play.api.Configuration
 import play.api.i18n.{ I18nSupport, Messages, MessagesApi }
 import play.api.libs.concurrent.Execution.Implicits._
-import play.api.mvc.Controller
+import play.api.mvc.{ Action, AnyContent, Controller }
 import utils.auth.DefaultEnv
 
 import scala.concurrent.Future
@@ -25,15 +26,15 @@ import scala.language.postfixOps
 /**
  * The `Sign In` controller.
  *
- * @param messagesApi The Play messages API.
- * @param silhouette The Silhouette stack.
- * @param userService The user service implementation.
- * @param authInfoRepository The auth info repository implementation.
- * @param credentialsProvider The credentials provider.
+ * @param messagesApi            The Play messages API.
+ * @param silhouette             The Silhouette stack.
+ * @param userService            The user service implementation.
+ * @param authInfoRepository     The auth info repository implementation.
+ * @param credentialsProvider    The credentials provider.
  * @param socialProviderRegistry The social provider registry.
- * @param configuration The Play configuration.
- * @param clock The clock instance.
- * @param webJarAssets The webjar assets implementation.
+ * @param configuration          The Play configuration.
+ * @param clock                  The clock instance.
+ * @param webJarAssets           The webjar assets implementation.
  */
 class SignInController @Inject() (
   val messagesApi: MessagesApi,
@@ -52,8 +53,8 @@ class SignInController @Inject() (
    *
    * @return The result to display.
    */
-  def view = silhouette.UnsecuredAction.async { implicit request =>
-    Future.successful(Ok(views.html.signIn(SignInForm.form, socialProviderRegistry)))
+  def view: Action[AnyContent] = silhouette.UnsecuredAction.async { implicit request =>
+    Future.successful(Ok(views.html.auth.signIn(SignInForm.form, socialProviderRegistry)))
   }
 
   /**
@@ -61,16 +62,16 @@ class SignInController @Inject() (
    *
    * @return The result to display.
    */
-  def submit = silhouette.UnsecuredAction.async { implicit request =>
+  def submit: Action[AnyContent] = silhouette.UnsecuredAction.async { implicit request =>
     SignInForm.form.bindFromRequest.fold(
-      form => Future.successful(BadRequest(views.html.signIn(form, socialProviderRegistry))),
+      form => Future.successful(BadRequest(views.html.auth.signIn(form, socialProviderRegistry))),
       data => {
         val credentials = Credentials(data.email, data.password)
         credentialsProvider.authenticate(credentials).flatMap { loginInfo =>
-          val result = Redirect(routes.ApplicationController.index())
+          val result = Redirect(pages.routes.ApplicationController.index())
           userService.retrieve(loginInfo).flatMap {
             case Some(user) if !user.activated =>
-              Future.successful(Ok(views.html.activateAccount(data.email)))
+              Future.successful(Ok(views.html.auth.activateAccount(data.email)))
             case Some(user) =>
               val c = configuration.underlying
               silhouette.env.authenticatorService.create(loginInfo).map {
@@ -91,7 +92,7 @@ class SignInController @Inject() (
           }
         }.recover {
           case e: ProviderException =>
-            Redirect(routes.SignInController.view()).flashing("error" -> Messages("invalid.credentials"))
+            Redirect(auth.routes.SignInController.view()).flashing("error" -> Messages("invalid.credentials"))
         }
       }
     )
