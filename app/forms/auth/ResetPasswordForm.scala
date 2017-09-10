@@ -1,4 +1,4 @@
-package forms
+package forms.auth
 
 import play.api.data.Forms._ //?? Is this in use? there's no mapping function used.
 import play.api.data._
