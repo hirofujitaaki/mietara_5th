@@ -30,10 +30,4 @@ trait AuthTokenService {
    */
   def validate(id: UUID): Future[Option[AuthToken]]
 
-  /**
-   * Cleans expired tokens.
-   *
-   * @return The list of deleted tokens.
-   */
-  def clean: Future[Seq[AuthToken]]
 }
