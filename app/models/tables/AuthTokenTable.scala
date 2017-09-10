@@ -1,7 +1,8 @@
 package models.tables
 
-import org.joda.time._
-import slick.driver.PostgresDriver.api._
+import org.joda.time._ //?? for what?
+// import slick.driver.PostgresDriver.api._
+import slick.driver.JdbcProfile // for H2
 import slick.lifted.ProvenShape
 
 //?? why the hell has to make this models twice?
