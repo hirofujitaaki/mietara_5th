@@ -1,56 +1,78 @@
 package models.daos
 
 import java.util.UUID
+import javax.inject.Inject
 
-import com.mohiva.play.silhouette.api.LoginInfo
-import models.User
-import models.daos.UserDAOImpl._
+import models.AuthToken
+import models.daos.AuthTokenDAOImpl._
+import models.tables.{ AuthTokenTable, DbAuthToken }
+import org.joda.time.DateTime
+import play.api.db.slick.DatabaseConfigProvider
+import slick.backend.DatabaseConfig
+import slick.driver.JdbcProfile
+import slick.jdbc.JdbcBackend
+import slick.lifted.TableQuery
 
-import scala.collection.mutable
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 /**
- * Give access to the user object.
+ * Give access to the [[AuthToken]] object.
  */
-class UserDAOImpl extends UserDAO {
+class AuthTokenDAOImpl @Inject() (protected val dbConfigProvider: DatabaseConfigProvider) extends AuthTokenDAO {
+
+  val dbConfig: DatabaseConfig[JdbcProfile] = dbConfigProvider.get[JdbcProfile]
+  val db: JdbcBackend#DatabaseDef = dbConfig.db
+
+  import dbConfig.driver.api._
 
   /**
-   * Finds a user by its login info.
+   * Finds a token by its ID.
    *
-   * @param loginInfo The login info of the user to find.
-   * @return The found user or None if no user for the given login info could be found.
+   * @param id The unique token ID.
+   * @return The found token or None if no token for the given ID could be found.
    */
-  def find(loginInfo: LoginInfo) = Future.successful(
-    users.find { case (id, user) => user.loginInfo == loginInfo }.map(_._2)
-  )
+  def find(id: UUID): Future[Option[AuthToken]] = {
+    db.run(tokens.filter(_.id === id.toString).result.headOption).map { resultOption =>
+      resultOption.map {
+        dbToken => AuthToken(UUID.fromString(dbToken.id), UUID.fromString(dbToken.userID), DateTime.parse(dbToken.expiry))
+      }
+    }
+  }
 
   /**
-   * Finds a user by its user ID.
+   * Saves a token.
    *
-   * @param userID The ID of the user to find.
-   * @return The found user or None if no user for the given ID could be found.
+   * @param token The token to save.
+   * @return The saved token.
    */
-  def find(userID: UUID) = Future.successful(users.get(userID))
+  def save(token: AuthToken): Future[AuthToken] = {
+    db.run((
+      tokens returning tokens.map(_.id) into ((token, id) => token.copy(id))
+    ) += DbAuthToken(token.id.toString, token.userID.toString, token.expiry.toString)).map { _ =>
+      token
+    }
+  }
 
   /**
-   * Saves a user.
+   * Removes the token for the given ID.
    *
-   * @param user The user to save.
-   * @return The saved user.
+   * @param id The ID for which the token should be removed.
+   * @return A future to wait for the process to be completed.
    */
-  def save(user: User) = {
-    users += (user.userID -> user)
-    Future.successful(user)
+  def remove(id: UUID): Future[Int] = {
+    db.run(tokens.filter(_.id === id.toString).delete)
   }
 }
 
 /**
  * The companion object.
  */
-object UserDAOImpl {
+object AuthTokenDAOImpl {
 
   /**
-   * The list of users.
+   * The list of tokens.
    */
-  val users: mutable.HashMap[UUID, User] = mutable.HashMap()
+  private val tokens = TableQuery[AuthTokenTable]
+
 }
