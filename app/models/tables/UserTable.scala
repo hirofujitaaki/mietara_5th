@@ -84,7 +84,9 @@ class UserTable(tag: Tag) extends Table[DbUser](tag, "users") {
   def activated: Rep[Boolean] = column[Boolean]("activated")
 
   // returns DbUsers
+  // * star, <> diamond
   override def * : ProvenShape[DbUser] = (userID, firstName, lastName, fullName, email, avatarURL, activated) <> (DbUser.tupled, DbUser.unapply)
+  // shorthand for ).<>((DbUser.apply _).tupled, 
 
 }
 
