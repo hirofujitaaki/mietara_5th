@@ -59,11 +59,11 @@ class PasswordInfoDAO @Inject() (
       dbLoginInfoOption.map {
         dbLoginInfo =>
           {
-            db.run { 
-              passwordInfos.filter(_.loginInfoId === dbLoginInfo.id) 
-              .map(p => (p.hasher, p.password, p.salt)) 
-              .update((authInfo.hasher, authInfo.password, authInfo.salt)) 
-              .transactionally 
+            db.run {
+              passwordInfos.filter(_.loginInfoId === dbLoginInfo.id)
+              .map(p => (p.hasher, p.password, p.salt))
+              .update((authInfo.hasher, authInfo.password, authInfo.salt))
+              .transactionally
             }
           }
       }

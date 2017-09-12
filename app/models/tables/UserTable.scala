@@ -1,12 +1,11 @@
 package models.tables
 
 // import slick.driver.PostgresDriver.api._
-import slick.driver.JdbcProfile // for H2, could be wrong
-// import slick.driver.{JdbcProfile, H2Driver} could be right
-import slick.lifted.ProvenShape //??
+import slick.driver.H2Driver.api._
+import slick.lifted.ProvenShape
 
-
-/** The first job is to tell Slick what tables you have in the database
+/**
+ *  The first job is to tell Slick what tables you have in the database
  *  and how to map them onto Scala values and types.
  */
 case class DbUser(
@@ -64,7 +63,8 @@ case class DbOpenIDAttribute(
   value: String
 )
 
-/** Next ypu difine a Table object, which corresponds to the database table and
+/**
+ *  Next ypu difine a Table object, which corresponds to the database table and
  *  tells Slick how to map back and forth between database data and instances of the case class.
  */
 class UserTable(tag: Tag) extends Table[DbUser](tag, "users") {
@@ -84,10 +84,9 @@ class UserTable(tag: Tag) extends Table[DbUser](tag, "users") {
 
   def activated: Rep[Boolean] = column[Boolean]("activated")
 
-  // returns DbUsers
   // * star, <> diamond
   override def * : ProvenShape[DbUser] = (userID, firstName, lastName, fullName, email, avatarURL, activated) <> (DbUser.tupled, DbUser.unapply)
-  // shorthand for ).<>((DbUser.apply _).tupled, 
+  // shorthand for ).<>((DbUser.apply _).tupled,
 
 }
 

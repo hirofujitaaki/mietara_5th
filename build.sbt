@@ -24,7 +24,7 @@ libraryDependencies ++= Seq(
   "com.enragedginger" %% "akka-quartz-scheduler" % "1.5.0-akka-2.4.x",
   "com.adrianhurt" %% "play-bootstrap" % "1.0-P25-B3",
   "com.mohiva" %% "play-silhouette-testkit" % "4.0.0" % "test",
-  // instead of "org.postgresql" % "postgresql" % "9.4.1212",
+  // "org.postgresql" % "postgresql" % "9.4.1212",
   "com.h2database" % "h2" % "1.3.176",
   "com.typesafe.play" %% "play-slick" % "2.0.0",
   "com.typesafe.play" %% "play-slick-evolutions" % "2.0.0",

@@ -2,7 +2,7 @@ package models.tables
 
 import org.joda.time._ //?? for what?
 // import slick.driver.PostgresDriver.api._
-import slick.driver.JdbcProfile // for H2, could be wrong.
+import slick.driver.H2Driver.api._
 import slick.lifted.ProvenShape
 
 case class DbAuthToken(
