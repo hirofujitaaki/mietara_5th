@@ -1,5 +1,7 @@
 package modules
 
+import javax.inject.Inject
+
 import com.google.inject.name.Named
 import com.google.inject.{ AbstractModule, Provides }
 import com.mohiva.play.silhouette.api.actions.{ SecuredErrorHandler, UnsecuredErrorHandler }
@@ -29,6 +31,7 @@ import net.ceedubs.ficus.Ficus._
 import net.ceedubs.ficus.readers.ArbitraryTypeReader._
 import net.codingwell.scalaguice.ScalaModule
 import play.api.Configuration
+import play.api.db.slick.DatabaseConfigProvider
 import play.api.libs.concurrent.Execution.Implicits._
 import play.api.libs.openid.OpenIdClient
 import play.api.libs.ws.WSClient
@@ -56,10 +59,14 @@ class SilhouetteModule extends AbstractModule with ScalaModule {
     bind[Clock].toInstance(Clock())
 
     // Replace this with the bindings to your concrete DAOs
-    bind[DelegableAuthInfoDAO[PasswordInfo]].toInstance(new InMemoryAuthInfoDAO[PasswordInfo])
     bind[DelegableAuthInfoDAO[OAuth1Info]].toInstance(new InMemoryAuthInfoDAO[OAuth1Info])
     bind[DelegableAuthInfoDAO[OAuth2Info]].toInstance(new InMemoryAuthInfoDAO[OAuth2Info])
     bind[DelegableAuthInfoDAO[OpenIDInfo]].toInstance(new InMemoryAuthInfoDAO[OpenIDInfo])
+  }
+
+  @Provides
+  def providePasswordInfoDao(dbConfigProvider: DatabaseConfigProvider, userDAO: UserDAO): DelegableAuthInfoDAO[PasswordInfo] = {
+    new PasswordInfoDAO(dbConfigProvider, userDAO)
   }
 
   /**
@@ -74,9 +81,9 @@ class SilhouetteModule extends AbstractModule with ScalaModule {
   /**
    * Provides the Silhouette environment.
    *
-   * @param userService The user service implementation.
+   * @param userService          The user service implementation.
    * @param authenticatorService The authentication service implementation.
-   * @param eventBus The event bus instance.
+   * @param eventBus             The event bus instance.
    * @return The Silhouette environment.
    */
   @Provides
@@ -97,12 +104,12 @@ class SilhouetteModule extends AbstractModule with ScalaModule {
    * Provides the social provider registry.
    *
    * @param facebookProvider The Facebook provider implementation.
-   * @param googleProvider The Google provider implementation.
-   * @param vkProvider The VK provider implementation.
-   * @param clefProvider The Clef provider implementation.
-   * @param twitterProvider The Twitter provider implementation.
-   * @param xingProvider The Xing provider implementation.
-   * @param yahooProvider The Yahoo provider implementation.
+   * @param googleProvider   The Google provider implementation.
+   * @param vkProvider       The VK provider implementation.
+   * @param clefProvider     The Clef provider implementation.
+   * @param twitterProvider  The Twitter provider implementation.
+   * @param xingProvider     The Xing provider implementation.
+   * @param yahooProvider    The Yahoo provider implementation.
    * @return The Silhouette environment.
    */
   @Provides
@@ -132,7 +139,8 @@ class SilhouetteModule extends AbstractModule with ScalaModule {
    * @param configuration The Play configuration.
    * @return The cookie signer for the OAuth1 token secret provider.
    */
-  @Provides @Named("oauth1-token-secret-cookie-signer")
+  @Provides
+  @Named("oauth1-token-secret-cookie-signer")
   def provideOAuth1TokenSecretCookieSigner(configuration: Configuration): CookieSigner = {
     val config = configuration.underlying.as[JcaCookieSignerSettings]("silhouette.oauth1TokenSecretProvider.cookie.signer")
 
@@ -145,7 +153,8 @@ class SilhouetteModule extends AbstractModule with ScalaModule {
    * @param configuration The Play configuration.
    * @return The crypter for the OAuth1 token secret provider.
    */
-  @Provides @Named("oauth1-token-secret-crypter")
+  @Provides
+  @Named("oauth1-token-secret-crypter")
   def provideOAuth1TokenSecretCrypter(configuration: Configuration): Crypter = {
     val config = configuration.underlying.as[JcaCrypterSettings]("silhouette.oauth1TokenSecretProvider.crypter")
 
@@ -158,7 +167,8 @@ class SilhouetteModule extends AbstractModule with ScalaModule {
    * @param configuration The Play configuration.
    * @return The cookie signer for the OAuth2 state provider.
    */
-  @Provides @Named("oauth2-state-cookie-signer")
+  @Provides
+  @Named("oauth2-state-cookie-signer")
   def provideOAuth2StageCookieSigner(configuration: Configuration): CookieSigner = {
     val config = configuration.underlying.as[JcaCookieSignerSettings]("silhouette.oauth2StateProvider.cookie.signer")
 
@@ -171,7 +181,8 @@ class SilhouetteModule extends AbstractModule with ScalaModule {
    * @param configuration The Play configuration.
    * @return The cookie signer for the authenticator.
    */
-  @Provides @Named("authenticator-cookie-signer")
+  @Provides
+  @Named("authenticator-cookie-signer")
   def provideAuthenticatorCookieSigner(configuration: Configuration): CookieSigner = {
     val config = configuration.underlying.as[JcaCookieSignerSettings]("silhouette.authenticator.cookie.signer")
 
@@ -184,7 +195,8 @@ class SilhouetteModule extends AbstractModule with ScalaModule {
    * @param configuration The Play configuration.
    * @return The crypter for the authenticator.
    */
-  @Provides @Named("authenticator-crypter")
+  @Provides
+  @Named("authenticator-crypter")
   def provideAuthenticatorCrypter(configuration: Configuration): Crypter = {
     val config = configuration.underlying.as[JcaCrypterSettings]("silhouette.authenticator.crypter")
 
@@ -195,9 +207,9 @@ class SilhouetteModule extends AbstractModule with ScalaModule {
    * Provides the auth info repository.
    *
    * @param passwordInfoDAO The implementation of the delegable password auth info DAO.
-   * @param oauth1InfoDAO The implementation of the delegable OAuth1 auth info DAO.
-   * @param oauth2InfoDAO The implementation of the delegable OAuth2 auth info DAO.
-   * @param openIDInfoDAO The implementation of the delegable OpenID auth info DAO.
+   * @param oauth1InfoDAO   The implementation of the delegable OAuth1 auth info DAO.
+   * @param oauth2InfoDAO   The implementation of the delegable OAuth2 auth info DAO.
+   * @param openIDInfoDAO   The implementation of the delegable OpenID auth info DAO.
    * @return The auth info repository instance.
    */
   @Provides
@@ -213,12 +225,12 @@ class SilhouetteModule extends AbstractModule with ScalaModule {
   /**
    * Provides the authenticator service.
    *
-   * @param cookieSigner The cookie signer implementation.
-   * @param crypter The crypter implementation.
+   * @param cookieSigner         The cookie signer implementation.
+   * @param crypter              The crypter implementation.
    * @param fingerprintGenerator The fingerprint generator implementation.
-   * @param idGenerator The ID generator implementation.
-   * @param configuration The Play configuration.
-   * @param clock The clock instance.
+   * @param idGenerator          The ID generator implementation.
+   * @param configuration        The Play configuration.
+   * @param clock                The clock instance.
    * @return The authenticator service.
    */
   @Provides
@@ -248,10 +260,10 @@ class SilhouetteModule extends AbstractModule with ScalaModule {
   /**
    * Provides the OAuth1 token secret provider.
    *
-   * @param cookieSigner The cookie signer implementation.
-   * @param crypter The crypter implementation.
+   * @param cookieSigner  The cookie signer implementation.
+   * @param crypter       The crypter implementation.
    * @param configuration The Play configuration.
-   * @param clock The clock instance.
+   * @param clock         The clock instance.
    * @return The OAuth1 token secret provider implementation.
    */
   @Provides
@@ -268,10 +280,10 @@ class SilhouetteModule extends AbstractModule with ScalaModule {
   /**
    * Provides the OAuth2 state provider.
    *
-   * @param idGenerator The ID generator implementation.
-   * @param cookieSigner The cookie signer implementation.
+   * @param idGenerator   The ID generator implementation.
+   * @param cookieSigner  The cookie signer implementation.
    * @param configuration The Play configuration.
-   * @param clock The clock instance.
+   * @param clock         The clock instance.
    * @return The OAuth2 state provider implementation.
    */
   @Provides
@@ -298,7 +310,7 @@ class SilhouetteModule extends AbstractModule with ScalaModule {
   /**
    * Provides the credentials provider.
    *
-   * @param authInfoRepository The auth info repository implementation.
+   * @param authInfoRepository     The auth info repository implementation.
    * @param passwordHasherRegistry The password hasher registry.
    * @return The credentials provider.
    */
@@ -313,7 +325,7 @@ class SilhouetteModule extends AbstractModule with ScalaModule {
   /**
    * Provides the Facebook provider.
    *
-   * @param httpLayer The HTTP layer implementation.
+   * @param httpLayer     The HTTP layer implementation.
    * @param stateProvider The OAuth2 state provider implementation.
    * @param configuration The Play configuration.
    * @return The Facebook provider.
@@ -330,7 +342,7 @@ class SilhouetteModule extends AbstractModule with ScalaModule {
   /**
    * Provides the Google provider.
    *
-   * @param httpLayer The HTTP layer implementation.
+   * @param httpLayer     The HTTP layer implementation.
    * @param stateProvider The OAuth2 state provider implementation.
    * @param configuration The Play configuration.
    * @return The Google provider.
@@ -347,7 +359,7 @@ class SilhouetteModule extends AbstractModule with ScalaModule {
   /**
    * Provides the VK provider.
    *
-   * @param httpLayer The HTTP layer implementation.
+   * @param httpLayer     The HTTP layer implementation.
    * @param stateProvider The OAuth2 state provider implementation.
    * @param configuration The Play configuration.
    * @return The VK provider.
@@ -364,7 +376,7 @@ class SilhouetteModule extends AbstractModule with ScalaModule {
   /**
    * Provides the Clef provider.
    *
-   * @param httpLayer The HTTP layer implementation.
+   * @param httpLayer     The HTTP layer implementation.
    * @param configuration The Play configuration.
    * @return The Clef provider.
    */
@@ -377,9 +389,9 @@ class SilhouetteModule extends AbstractModule with ScalaModule {
   /**
    * Provides the Twitter provider.
    *
-   * @param httpLayer The HTTP layer implementation.
+   * @param httpLayer           The HTTP layer implementation.
    * @param tokenSecretProvider The token secret provider implementation.
-   * @param configuration The Play configuration.
+   * @param configuration       The Play configuration.
    * @return The Twitter provider.
    */
   @Provides
@@ -395,9 +407,9 @@ class SilhouetteModule extends AbstractModule with ScalaModule {
   /**
    * Provides the Xing provider.
    *
-   * @param httpLayer The HTTP layer implementation.
+   * @param httpLayer           The HTTP layer implementation.
    * @param tokenSecretProvider The token secret provider implementation.
-   * @param configuration The Play configuration.
+   * @param configuration       The Play configuration.
    * @return The Xing provider.
    */
   @Provides
@@ -413,9 +425,9 @@ class SilhouetteModule extends AbstractModule with ScalaModule {
   /**
    * Provides the Yahoo provider.
    *
-   * @param cacheLayer The cache layer implementation.
-   * @param httpLayer The HTTP layer implementation.
-   * @param client The OpenID client implementation.
+   * @param cacheLayer    The cache layer implementation.
+   * @param httpLayer     The HTTP layer implementation.
+   * @param client        The OpenID client implementation.
    * @param configuration The Play configuration.
    * @return The Yahoo provider.
    */
