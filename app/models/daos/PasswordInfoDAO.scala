@@ -3,7 +3,7 @@ package models.daos
 import javax.inject.Inject
 
 import com.mohiva.play.silhouette.api.LoginInfo
-import com.mohiva.play.silhouette.api.util.PasswordInfo  // works like User or AuthToken model.
+import com.mohiva.play.silhouette.api.util.PasswordInfo // works like User or AuthToken model.
 import com.mohiva.play.silhouette.persistence.daos.DelegableAuthInfoDAO
 import models.daos.PasswordInfoDAO._ //?? what for
 import models.tables.{ DbPasswordInfo, PasswordInfoTable }
@@ -61,9 +61,9 @@ class PasswordInfoDAO @Inject() (
           {
             db.run {
               passwordInfos.filter(_.loginInfoId === dbLoginInfo.id)
-              .map(p => (p.hasher, p.password, p.salt))
-              .update((authInfo.hasher, authInfo.password, authInfo.salt))
-              .transactionally
+                .map(p => (p.hasher, p.password, p.salt))
+                .update((authInfo.hasher, authInfo.password, authInfo.salt))
+                .transactionally
             }
           }
       }

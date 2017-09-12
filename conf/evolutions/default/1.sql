@@ -40,7 +40,7 @@ CREATE TABLE "user_login_info" (
 );
 
 CREATE TABLE "password_info" (
-  "user_id" VARCHAR NOT NULL,
+  "hasher" VARCHAR NOT NULL,
   "password" VARCHAR NOT NULL,
   "salt" VARCHAR,
   "login_info_id" INTEGER NOT NULL
