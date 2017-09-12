@@ -1,7 +1,8 @@
 package models.tables
 
 // import slick.driver.PostgresDriver.api._
-import slick.driver.JdbcProfile // for H2
+import slick.driver.JdbcProfile // for H2, could be wrong
+// import slick.driver.{JdbcProfile, H2Driver} could be right
 import slick.lifted.ProvenShape //??
 
 
