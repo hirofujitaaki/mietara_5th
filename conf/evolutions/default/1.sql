@@ -10,6 +10,12 @@
 /* about SERIAL
    https://stackoverflow.com/questions/18389537/does-postgresql-serial-work-differently */
 
+/* about data Drop
+   https://groups.google.com/forum/#!topic/play-framework/eBQt3rSvSbw
+   In Dev mode, all data will be dropped once Downs are triggerd.
+   If this is not the behavior you want, add sql.2, sql.3 etc,
+   then tables are updated with the data stored. */
+
 # --- !Ups
 
 CREATE TABLE "users" (
@@ -18,6 +24,7 @@ CREATE TABLE "users" (
   "last_name" VARCHAR,
   "full_name" VARCHAR,
   "email" VARCHAR,
+  "birthday" DATE,
   "avatar_url" VARCHAR,
   "activated" BOOLEAN DEFAULT FALSE
 );
