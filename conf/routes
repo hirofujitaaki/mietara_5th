@@ -4,14 +4,14 @@
 
 # Home page
 GET         /                                controllers.pages.ApplicationController.index
-GET         /signOut                         controllers.pages.ApplicationController.signOut
+GET         /signout                         controllers.pages.ApplicationController.signOut
 GET         /authenticate/:provider          controllers.auth.SocialAuthController.authenticate(provider)
 
-GET         /signUp                          controllers.auth.SignUpController.view
-POST        /signUp                          controllers.auth.SignUpController.submit
+GET         /signup                         controllers.auth.SignUpController.view
+POST        /signup                          controllers.auth.SignUpController.submit
 
-GET         /signIn                          controllers.auth.SignInController.view
-POST        /signIn                          controllers.auth.SignInController.submit
+GET         /signin                          controllers.auth.SignInController.view
+POST        /signin                          controllers.auth.SignInController.submit
 
 GET         /password/forgot                 controllers.auth.ForgotPasswordController.view
 POST        /password/forgot                 controllers.auth.ForgotPasswordController.submit
@@ -24,5 +24,7 @@ GET         /account/email/:email            controllers.auth.ActivateAccountCon
 GET         /account/activate/:token         controllers.auth.ActivateAccountController.activate(token: java.util.UUID)
 
 # Map static resources from the /public folder to the /assets URL path
+# about WebJars
+# https://adtech.cyberagent.io/scalablog/2016/09/30/play-framework-with-webjars-で管理画面をサクッと作ってみる/
 GET         /assets/*file                    controllers.Assets.at(path="/public", file)
 GET         /webjars/*file                   controllers.WebJarAssets.at(file)
