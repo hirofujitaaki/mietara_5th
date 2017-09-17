@@ -1,6 +1,7 @@
 package models
 
 import java.util.UUID
+import java.sql.Date
 
 import com.mohiva.play.silhouette.api.{ Identity, LoginInfo }
 
@@ -23,6 +24,7 @@ case class User(
   lastName: Option[String],
   fullName: Option[String],
   email: Option[String],
+  birthday: Option[Date],
   avatarURL: Option[String],
   activated: Boolean
 ) extends Identity {

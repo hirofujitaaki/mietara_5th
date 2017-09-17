@@ -3,6 +3,7 @@ package models.tables
 import slick.driver.PostgresDriver.api._
 // import slick.driver.H2Driver.api._
 import slick.lifted.ProvenShape
+import java.sql.Date
 
 /**
  *  The first job is to tell Slick what tables you have in the database
@@ -14,6 +15,7 @@ case class DbUser(
   lastName: Option[String],
   fullName: Option[String],
   email: Option[String],
+  birthday: Option[Date],
   avatarUrl: Option[String],
   activated: Boolean
 )
@@ -80,12 +82,14 @@ class UserTable(tag: Tag) extends Table[DbUser](tag, "users") {
 
   def email: Rep[Option[String]] = column[Option[String]]("email")
 
+  def birthday: Rep[Option[Date]] = column[Option[Date]]("birthday")
+
   def avatarURL: Rep[Option[String]] = column[Option[String]]("avatar_url")
 
   def activated: Rep[Boolean] = column[Boolean]("activated")
 
   // * star, <> diamond
-  override def * : ProvenShape[DbUser] = (userID, firstName, lastName, fullName, email, avatarURL, activated) <> (DbUser.tupled, DbUser.unapply)
+  override def * : ProvenShape[DbUser] = (userID, firstName, lastName, fullName, email, birthday, avatarURL, activated) <> (DbUser.tupled, DbUser.unapply)
   // shorthand for ).<>((DbUser.apply _).tupled,
 
 }

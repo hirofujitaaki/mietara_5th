@@ -45,7 +45,7 @@ class UserDAOImpl @Inject() (protected val dbConfigProvider: DatabaseConfigProvi
 
     db.run(userQuery.result.headOption).map { dbUserOption =>
       dbUserOption.map {
-        user => User(UUID.fromString(user.userID), loginInfo, user.firstName, user.lastName, user.fullName, user.email, user.avatarUrl, user.activated)
+        user => User(UUID.fromString(user.userID), loginInfo, user.firstName, user.lastName, user.fullName, user.email, user.birthday, user.avatarUrl, user.activated)
       }
     }
   }
@@ -73,6 +73,7 @@ class UserDAOImpl @Inject() (protected val dbConfigProvider: DatabaseConfigProvi
             user.lastName,
             user.fullName,
             user.email,
+            user.birthday,
             user.avatarUrl,
             user.activated
           )
@@ -88,7 +89,7 @@ class UserDAOImpl @Inject() (protected val dbConfigProvider: DatabaseConfigProvi
    * @return The saved user.
    */
   def save(user: User): Future[User] = {
-    val dbUser = DbUser(user.userID.toString, user.firstName, user.lastName, user.fullName, user.email, user.avatarURL, user.activated)
+    val dbUser = DbUser(user.userID.toString, user.firstName, user.lastName, user.fullName, user.email, user.birthday, user.avatarURL, user.activated)
     val dbLoginInfo = DbLoginInfo(None, user.loginInfo.providerID, user.loginInfo.providerKey)
 
     val loginInfoAction = {
