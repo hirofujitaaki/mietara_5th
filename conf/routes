@@ -7,8 +7,9 @@ GET         /                                controllers.pages.ApplicationContro
 GET         /signout                         controllers.pages.ApplicationController.signOut
 GET         /authenticate/:provider          controllers.auth.SocialAuthController.authenticate(provider)
 
-GET         /signup                         controllers.auth.SignUpController.view
+GET         /signup                          controllers.auth.SignUpController.view
 POST        /signup                          controllers.auth.SignUpController.submit
+GET         /signup/under18                  controllers.auth.SignUpController.under18
 
 GET         /signin                          controllers.auth.SignInController.view
 POST        /signin                          controllers.auth.SignInController.submit
