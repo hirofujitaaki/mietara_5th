@@ -11,7 +11,7 @@ import models.services.{ AuthTokenService, UserService }
 import play.api.i18n.{ I18nSupport, Messages, MessagesApi }
 import play.api.libs.concurrent.Execution.Implicits._
 import play.api.libs.mailer.{ Email, MailerClient }
-import play.api.mvc.{ Action, AnyContent, Controller }
+import play.api.mvc.{ Action, AnyContent, Controller, Result }
 import utils.auth.DefaultEnv
 
 import scala.concurrent.Future
@@ -72,15 +72,18 @@ class ActivateAccountController @Inject() (
    * @return The result to display.
    */
   def activate(token: UUID): Action[AnyContent] = silhouette.UnsecuredAction.async { implicit request =>
+    //authTokenService.validate(id: UUID): Future[Option[AuthToken]]
     authTokenService.validate(token).flatMap {
-      case Some(authToken) => userService.retrieve(authToken.userID).flatMap {
+      // Option[AuthToken] => userService.retrieve(id: UUID): Future[Option[User]]
+      case Some(authToken) => userService.retrieve(authToken.userID: UUID).flatMap {
         case Some(user) if user.loginInfo.providerID == CredentialsProvider.ID =>
+          // userService.save(user: User): Future[User]
           userService.save(user.copy(activated = true)).map { _ =>
-            Redirect(auth.routes.SignInController.view()).flashing("success" -> Messages("account.activated"))
+            Redirect(auth.routes.SignInController.view()).flashing("success" -> Messages("account.activated")): Result
           }
-        case _ => Future.successful(Redirect(auth.routes.SignInController.view()).flashing("error" -> Messages("invalid.activation.link")))
+        case _ => Future.successful(Redirect(auth.routes.SignInController.view()).flashing("error" -> Messages("invalid.activation.link"))): Future[Result]
       }
-      case None => Future.successful(Redirect(auth.routes.SignInController.view()).flashing("error" -> Messages("invalid.activation.link")))
+      case None => Future.successful(Redirect(auth.routes.SignInController.view()).flashing("error" -> Messages("invalid.activation.link"))): Future[Result]
     }
   }
 }

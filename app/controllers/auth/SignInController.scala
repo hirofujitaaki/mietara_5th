@@ -16,7 +16,7 @@ import net.ceedubs.ficus.Ficus._
 import play.api.Configuration
 import play.api.i18n.{ I18nSupport, Messages, MessagesApi }
 import play.api.libs.concurrent.Execution.Implicits._
-import play.api.mvc.{ Action, AnyContent, Controller }
+import play.api.mvc.{ Action, AnyContent, Controller, Result }
 import utils.auth.DefaultEnv
 
 import scala.concurrent.Future
@@ -64,25 +64,27 @@ class SignInController @Inject() (
    */
   def submit: Action[AnyContent] = silhouette.UnsecuredAction.async { implicit request =>
     SignInForm.form.bindFromRequest.fold(
-      form => Future.successful(BadRequest(views.html.auth.signIn(form, socialProviderRegistry))),
+      form => Future.successful(BadRequest(views.html.auth.signIn(form, socialProviderRegistry))): Future[Result],
       data => {
-        val credentials = Credentials(data.email, data.password)
-        credentialsProvider.authenticate(credentials).flatMap { loginInfo =>
-          val result = Redirect(pages.routes.ApplicationController.index())
+        val credentials: Credentials = Credentials(data.email, data.password)
+        // credentialsProvider.authenticate(credentials): Future[LoginInfo]
+        credentialsProvider.authenticate(credentials).flatMap { loginInfo: LoginInfo =>
+          val result: Result = Redirect(pages.routes.ApplicationController.index())
+          // userService.retrieve(loginInfo): Future[Option[User]]
           userService.retrieve(loginInfo).flatMap {
             case Some(user) if !user.activated =>
-              Future.successful(Ok(views.html.auth.activateAccount(data.email)))
+              Future.successful(Ok(views.html.auth.activateAccount(data.email))): Future[Result]
             case Some(user) =>
               val c = configuration.underlying
-              silhouette.env.authenticatorService.create(loginInfo).map {
+              silhouette.env.authenticatorService.create(loginInfo: LoginInfo).map {
                 case authenticator if data.rememberMe =>
                   authenticator.copy(
                     expirationDateTime = clock.now + c.as[FiniteDuration]("silhouette.authenticator.rememberMe.authenticatorExpiry"),
                     idleTimeout = c.getAs[FiniteDuration]("silhouette.authenticator.rememberMe.authenticatorIdleTimeout"),
                     cookieMaxAge = c.getAs[FiniteDuration]("silhouette.authenticator.rememberMe.cookieMaxAge")
                   )
-                case authenticator => authenticator
-              }.flatMap { authenticator =>
+                case authenticator => authenticator: DefaultEnv#A
+              }.flatMap { authenticator: DefaultEnv#A =>
                 silhouette.env.eventBus.publish(LoginEvent(user, request))
                 silhouette.env.authenticatorService.init(authenticator).flatMap { v =>
                   silhouette.env.authenticatorService.embed(v, result)
