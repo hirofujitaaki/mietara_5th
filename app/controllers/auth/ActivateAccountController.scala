@@ -4,14 +4,15 @@ import java.net.URLDecoder
 import java.util.UUID
 import javax.inject.Inject
 
-import com.mohiva.play.silhouette.api._
+import com.mohiva.play.silhouette.api._ // { LoginInfo included }
 import com.mohiva.play.silhouette.impl.providers.CredentialsProvider
-import controllers.{ WebJarAssets, auth }
+import controllers.{ WebJarAssets, auth, pages }
 import models.services.{ AuthTokenService, UserService }
 import play.api.i18n.{ I18nSupport, Messages, MessagesApi }
 import play.api.libs.concurrent.Execution.Implicits._
 import play.api.libs.mailer.{ Email, MailerClient }
 import play.api.mvc.{ Action, AnyContent, Controller, Result }
+import play.api.Configuration
 import utils.auth.DefaultEnv
 
 import scala.concurrent.Future
@@ -24,6 +25,7 @@ import scala.language.postfixOps
  * @param silhouette       The Silhouette stack.
  * @param userService      The user service implementation.
  * @param authTokenService The auth token service implementation.
+ * @param configuration
  * @param mailerClient     The mailer client.
  * @param webJarAssets     The WebJar assets locator.
  */
@@ -32,6 +34,7 @@ class ActivateAccountController @Inject() (
   silhouette: Silhouette[DefaultEnv],
   userService: UserService,
   authTokenService: AuthTokenService,
+  configuration: Configuration,
   mailerClient: MailerClient,
   implicit val webJarAssets: WebJarAssets)
   extends Controller with I18nSupport {
@@ -78,8 +81,20 @@ class ActivateAccountController @Inject() (
       case Some(authToken) => userService.retrieve(authToken.userID: UUID).flatMap {
         case Some(user) if user.loginInfo.providerID == CredentialsProvider.ID =>
           // userService.save(user: User): Future[User]
-          userService.save(user.copy(activated = true)).map { _ =>
-            Redirect(auth.routes.SignInController.view()).flashing("success" -> Messages("account.activated")): Result
+          userService.save(user.copy(activated = true)).map { user =>
+            val result = Redirect(pages.routes.ApplicationController.index()).flashing("success" -> Messages("account.activated")): Result
+            userService.retrieve(user.loginInfo).flatMap {
+              case Some(user) =>
+                silhouette.env.authenticatorService.create(user.loginInfo).flatMap {
+                  authenticator =>
+                    silhouette.env.eventBus.publish(LoginEvent(user, request))
+                    silhouette.env.authenticatorService.init(authenticator).flatMap { v =>
+                    // value flatten is not a member of scala.concurrent
+                    // .Future[com.mohiva.play.silhouette.api.services.AuthenticatorResult]
+                      silhouette.env.authenticatorService.embed(v, result) //.flatten
+                    }
+                }
+            }
           }
         case _ => Future.successful(Redirect(auth.routes.SignInController.view()).flashing("error" -> Messages("invalid.activation.link"))): Future[Result]
       }

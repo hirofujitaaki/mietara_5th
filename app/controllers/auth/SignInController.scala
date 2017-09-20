@@ -3,7 +3,7 @@ package controllers.auth
 import javax.inject.Inject
 
 import com.mohiva.play.silhouette.api.Authenticator.Implicits._
-import com.mohiva.play.silhouette.api._
+import com.mohiva.play.silhouette.api._ // { LoginInfo included }
 import com.mohiva.play.silhouette.api.exceptions.ProviderException
 import com.mohiva.play.silhouette.api.repositories.AuthInfoRepository
 import com.mohiva.play.silhouette.api.util.{ Clock, Credentials }
