@@ -76,6 +76,7 @@ class SignInController @Inject() (
               Future.successful(Ok(views.html.auth.activateAccount(data.email))): Future[Result]
             case Some(user) =>
               val c = configuration.underlying
+              //authenticatorService.create(loginInfo: LoginInfo): Future[utils.auth.DefaultEnv#A]
               silhouette.env.authenticatorService.create(loginInfo: LoginInfo).map {
                 case authenticator if data.rememberMe =>
                   authenticator.copy(
@@ -86,7 +87,9 @@ class SignInController @Inject() (
                 case authenticator => authenticator: DefaultEnv#A
               }.flatMap { authenticator: DefaultEnv#A =>
                 silhouette.env.eventBus.publish(LoginEvent(user, request))
+                // returns Future[utils.auth.DefaultEnv#A#Value]
                 silhouette.env.authenticatorService.init(authenticator).flatMap { v =>
+                  // returns Future[AuthenticatorResult]
                   silhouette.env.authenticatorService.embed(v, result)
                 }
               }

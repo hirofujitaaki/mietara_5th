@@ -6,6 +6,7 @@ import javax.inject.Inject
 
 import com.mohiva.play.silhouette.api._ // { LoginInfo included }
 import com.mohiva.play.silhouette.impl.providers.CredentialsProvider
+import com.mohiva.play.silhouette.impl.exceptions.IdentityNotFoundException
 import controllers.{ WebJarAssets, auth, pages }
 import models.services.{ AuthTokenService, UserService }
 import play.api.i18n.{ I18nSupport, Messages, MessagesApi }
@@ -81,19 +82,22 @@ class ActivateAccountController @Inject() (
       case Some(authToken) => userService.retrieve(authToken.userID: UUID).flatMap {
         case Some(user) if user.loginInfo.providerID == CredentialsProvider.ID =>
           // userService.save(user: User): Future[User]
-          userService.save(user.copy(activated = true)).map { user =>
+          userService.save(user.copy(activated = true)).flatMap { user =>
             val result = Redirect(pages.routes.ApplicationController.index()).flashing("success" -> Messages("account.activated")): Result
+            // userService.retrieve(loginInfo: LoginInfo): Future[Option[User]]
             userService.retrieve(user.loginInfo).flatMap {
               case Some(user) =>
+                //returns Future[utils.auth.DefaultEnv#A#]
                 silhouette.env.authenticatorService.create(user.loginInfo).flatMap {
                   authenticator =>
                     silhouette.env.eventBus.publish(LoginEvent(user, request))
+                    // returns Future[utils.auth.DefaultEnv#Env#Value]
                     silhouette.env.authenticatorService.init(authenticator).flatMap { v =>
-                    // value flatten is not a member of scala.concurrent
-                    // .Future[com.mohiva.play.silhouette.api.services.AuthenticatorResult]
-                      silhouette.env.authenticatorService.embed(v, result) //.flatten
+                      // returns Future[AuthenticatorResult]
+                      silhouette.env.authenticatorService.embed(v, result)
                     }
                 }
+              case None => Future.failed(new IdentityNotFoundException("Couldn't find user"))
             }
           }
         case _ => Future.successful(Redirect(auth.routes.SignInController.view()).flashing("error" -> Messages("invalid.activation.link"))): Future[Result]
