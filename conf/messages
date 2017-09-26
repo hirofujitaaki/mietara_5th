@@ -4,6 +4,7 @@ invalid.credentials = Invalid credentials!
 access.denied = Access denied!
 could.not.authenticate = Could not authenticate with social provider! Please try again!
 
+index.title = Home
 account.title = Silhouette - Account
 sign.up.title = Silhouette - Sign Up
 sign.in.title = Silhouette - Sign In

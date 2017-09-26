@@ -1,0 +1,10 @@
+@(user: Option[models.User] = None)(implicit request: RequestHeader, messages: Messages, webJarAssets: WebJarAssets)
+
+@main(Messages("index.title"), user) {
+    <fieldset class="col-md-6 col-md-offset-3">
+        <div class="info">
+          <p>index page</p>
+        </div>
+    </fieldset>
+}
+

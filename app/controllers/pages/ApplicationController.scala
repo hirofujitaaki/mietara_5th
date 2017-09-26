@@ -31,11 +31,10 @@ class ApplicationController @Inject() (
    *
    * @return The result to display.
    */
-  def index: Action[AnyContent] = ???
-  // = silhouette.SecuredAction.async { implicit request =>
-  // Future.successful(Ok(views.html.index(request.identity)))
-  // have to find a way to use request.identity
-  // without using SecuredAction. see Todoist for details
+  def index: Action[AnyContent] = silhouette.UserAwareAction.async { implicit request =>
+    // request.identity result in either Some(identity) or None
+    Future.successful(Ok(views.html.index(request.identity)))
+  }
 
   /**
    * Handles the Sign Out action.
