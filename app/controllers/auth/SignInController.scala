@@ -69,7 +69,7 @@ class SignInController @Inject() (
         val credentials: Credentials = Credentials(data.email, data.password)
         // credentialsProvider.authenticate(credentials): Future[LoginInfo]
         credentialsProvider.authenticate(credentials).flatMap { loginInfo: LoginInfo =>
-          val result: Result = Redirect(pages.routes.ApplicationController.index())
+          val result: Result = Redirect(pages.routes.AccountController.view())
           // userService.retrieve(loginInfo): Future[Option[User]]
           userService.retrieve(loginInfo).flatMap {
             case Some(user) if !user.activated =>
