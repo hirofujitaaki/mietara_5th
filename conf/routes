@@ -24,7 +24,7 @@ POST        /password/change                 controllers.auth.ChangePasswordCont
 GET         /account/email/:email            controllers.auth.ActivateAccountController.send(email: String)
 GET         /account/activate/:token         controllers.auth.ActivateAccountController.activate(token: java.util.UUID)
 
-GET         /account                         controllers.pages.AccountController.view
+GET         /account/profile                 controllers.pages.AccountController.profile
 
 # Map static resources from the /public folder to the /assets URL path
 # about WebJars

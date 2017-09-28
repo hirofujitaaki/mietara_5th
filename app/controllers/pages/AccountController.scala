@@ -29,7 +29,7 @@ class AccountController @Inject() (
    *
    * @return The result to display.
    */
-  def view: Action[AnyContent] = silhouette.SecuredAction.async { implicit request =>
+  def profile: Action[AnyContent] = silhouette.SecuredAction.async { implicit request =>
     Future.successful(Ok(views.html.account(request.identity)))
   }
 }
