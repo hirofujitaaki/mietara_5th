@@ -2,11 +2,11 @@
 
 CREATE TABLE blogs (
   id SERIAL NOT NULL,
-  title VARCHAR NOT NULL,
-  content VARCHAR NOT NULL,
+  title VARCHAR,
+  content VARCHAR,
   user_id VARCHAR NOT NULL,
-  created_at TIMESTAMP NOT NULL,
-  updated_at TIMESTAMP
+  created_at VARCHAR,
+  updated_at VARCHAR
 );
 
 
