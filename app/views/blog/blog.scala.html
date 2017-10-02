@@ -1,0 +1,20 @@
+@import forms.blog.BlogForm
+@(blogForm: Form[BlogForm.Data])(implicit request: RequestHeader, messages: Messages, webJarAssets: WebJarAssets)
+
+@import b3.inline.fieldConstructor
+
+@main(Messages("blog.title")) {
+  <fieldset class="col-md-6 col-md-offset-3">
+    <legend>@Messages("blog.post")</legend>
+    @helper.form(action = controllers.blog.routes.BlogController.submit()) {
+    @helper.CSRF.formField
+    @b3.text(blogForm("title"), '_hiddenLabel -> Messages("blog.title"), 'placeholder -> Messages("title"), 'class -> "form-control input-lg")
+    @b3.text(blogForm("context"), '_hiddenLabel -> Messages("blog.context"), 'placeholder -> Messages("blog.context"), 'class ->"form-control input-lg")
+    <div class="form-group">
+        <div>
+            <button id="submit" type="submit" value="submit" class="btn btn-lg btn-primary btn-block">@Messages("blog.post")</button>
+        </div>
+    </div>
+    }
+  </fieldset>
+}
