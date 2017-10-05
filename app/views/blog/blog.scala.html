@@ -9,7 +9,7 @@
     @helper.form(action = controllers.blog.routes.BlogController.submit()) {
     @helper.CSRF.formField
     @b3.text(blogForm("title"), '_hiddenLabel -> Messages("blog.title"), 'placeholder -> Messages("title"), 'class -> "form-control input-lg")
-    @b3.text(blogForm("context"), '_hiddenLabel -> Messages("blog.context"), 'placeholder -> Messages("blog.context"), 'class ->"form-control input-lg")
+    @b3.text(blogForm("content"), '_hiddenLabel -> Messages("blog.content"), 'placeholder -> Messages("blog.content"), 'class ->"form-control input-lg")
     <div class="form-group">
         <div>
             <button id="submit" type="submit" value="submit" class="btn btn-lg btn-primary btn-block">@Messages("blog.post")</button>

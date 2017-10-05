@@ -13,7 +13,7 @@ import slick.lifted.ProvenShape
  */
 
 case class DbBlog(
-  id: Option[Long],
+  // id: Option[Long],
   title: String,
   content: String,
   userID: String,
@@ -27,7 +27,7 @@ case class DbBlog(
 // defines the class BlogTable
 class BlogTable(tag: Tag) extends Table[DbBlog](tag, "blogs") {
 
-  def id: Rep[Option[Long]] = column[Option[Long]]("id", O.PrimaryKey, O.AutoInc)
+  // def id: Rep[Option[Long]] = column[Option[Long]]("id", O.PrimaryKey, O.AutoInc)
 
   def title: Rep[String] = column[String]("title")
 
@@ -37,7 +37,7 @@ class BlogTable(tag: Tag) extends Table[DbBlog](tag, "blogs") {
 
   def createdAt: Rep[String] = column[String]("created_at")
 
-  override def * : ProvenShape[DbBlog] = (id, title, content, userID, createdAt) <> (DbBlog.tupled, DbBlog.unapply)
+  override def * : ProvenShape[DbBlog] = (title, content, userID, createdAt) <> (DbBlog.tupled, DbBlog.unapply)
 
   /**
    * There's a snippet private val blogs = TableQuery[BlogTable] in BlogDAOImpl.scala

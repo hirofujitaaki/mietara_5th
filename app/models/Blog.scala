@@ -14,7 +14,7 @@ import org.joda.time.DateTime
  */
 
 case class Blog(
-  id: Option[Long],
+  // id: Option[Long],
   title: String,
   content: String,
   userID: UUID,

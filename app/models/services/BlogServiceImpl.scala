@@ -29,9 +29,9 @@ class BlogServiceImpl @Inject() (blogDAO: BlogDAO, clock: Clock) extends BlogSer
    * @param content The content of the post.
    * @param userID The user by whom the post is created.
    */
-  def create(title: String, content: String, user: User): Future[Blog] = {
+  def create(title: String, content: String, user: User): Future[Int] = {
     blogDAO.save(Blog(
-      id = None,
+      // id = None,
       title = title,
       content = content,
       userID = user.userID,
