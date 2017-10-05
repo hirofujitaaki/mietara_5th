@@ -51,6 +51,18 @@ class AuthTokenDAOImpl @Inject() (protected val dbConfigProvider: DatabaseConfig
       tokens returning tokens.map(_.id) into ((token, id) => token.copy(id))
     ) += DbAuthToken(token.id.toString, token.userID.toString, token.expiry.toString)).map { _ =>
       token
+      /**
+       * DB usually returns Int, which represents the rows effected. This behavior can be changed
+       * with the returning method where you specify the columnS to be returned.
+       * val userId = (users returning users.map(_.id)) += User(None, "Steve", "Zeiger")
+       *
+       * You can follow th returning method with the into method to map the inserted values and
+       * the generated keys (specified in returning) to desired value. Here is an example of
+       * using this feature to return an object with an updated it:
+       * val userWithId = (users returning users.map(_.id) into ((user, id) =>
+       *    user.copy(id=Some(id)))
+       * ) += User(None, "Steve", "Zeiger")
+       */
     }
   }
 

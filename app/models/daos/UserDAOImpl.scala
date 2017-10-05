@@ -90,7 +90,7 @@ class UserDAOImpl @Inject() (protected val dbConfigProvider: DatabaseConfigProvi
    */
   def save(user: User): Future[User] = {
     val dbUser = DbUser(user.userID.toString, user.firstName, user.lastName, user.fullName, user.email, user.birthday, user.avatarURL, user.activated)
-    val dbLoginInfo = DbLoginInfo(None, user.loginInfo.providerID, user.loginInfo.providerKey)
+    val dbLoginInfo = DbLoginInfo(None, user.loginInfo.providerID, user.loginInfo.providerKey) // None for SERIAL in DB
 
     val loginInfoAction = {
       val retrieveLoginInfo = loginInfos.filter(

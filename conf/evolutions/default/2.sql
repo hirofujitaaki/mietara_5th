@@ -1,12 +1,11 @@
 # --- !Ups
 
 CREATE TABLE blogs (
-  id SERIAL NOT NULL,
-  title VARCHAR,
-  content VARCHAR,
+  id BIGSERIAL NOT NULL,
+  title VARCHAR NOT NULL,
+  content VARCHAR NOT NULL,
   user_id VARCHAR NOT NULL,
-  created_at VARCHAR,
-  updated_at VARCHAR
+  created_at VARCHAR NOT NULL
 );
 
 

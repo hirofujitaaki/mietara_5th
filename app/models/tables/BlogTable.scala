@@ -1,3 +1,7 @@
+/**
+ * Defining the schema
+ * Tables represent mapping between scala data types and the tables in database data.
+ */
 package models.tables
 
 import slick.driver.PostgresDriver.api._
@@ -9,28 +13,35 @@ import slick.lifted.ProvenShape
  */
 
 case class DbBlog(
-  id: Int,
-  title: Option[String],
-  content: Option[String],
+  id: Option[Long],
+  title: String,
+  content: String,
   userID: String,
-  createdAt: Option[String],
-  updatedAt: Option[String]
+  createdAt: String
+/**
+ * There is nothing special about the default value, 0L, -- it doesn't signify anything
+ * in particualr. It is the O.AutoInc option that determines the behavior of +=.
+ */
 )
 
+// defines the class BlogTable
 class BlogTable(tag: Tag) extends Table[DbBlog](tag, "blogs") {
 
-  def id: Rep[Int] = column[Int]("id", O.PrimaryKey, O.AutoInc)
+  def id: Rep[Option[Long]] = column[Option[Long]]("id", O.PrimaryKey, O.AutoInc)
 
-  def title: Rep[Option[String]] = column[Option[String]]("title")
+  def title: Rep[String] = column[String]("title")
 
-  def content: Rep[Option[String]] = column[Option[String]]("content")
+  def content: Rep[String] = column[String]("content")
 
   def userID: Rep[String] = column[String]("uesr_id")
 
-  def createdAt: Rep[Option[String]] = column[Option[String]]("created_at")
+  def createdAt: Rep[String] = column[String]("created_at")
 
-  def updatedAt: Rep[Option[String]] = column[Option[String]]("updated_at")
+  override def * : ProvenShape[DbBlog] = (id, title, content, userID, createdAt) <> (DbBlog.tupled, DbBlog.unapply)
 
-  override def * : ProvenShape[DbBlog] = (id, title, content, userID, createdAt, updatedAt) <> (DbBlog.tupled, DbBlog.unapply)
+  /**
+   * There's a snippet private val blogs = TableQuery[BlogTable] in BlogDAOImpl.scala
+   * and all of this code works like blogs = SQL select * from blogs
+   */
 
 }

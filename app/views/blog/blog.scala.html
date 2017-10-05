@@ -1,9 +1,9 @@
 @import forms.blog.BlogForm
-@(blogForm: Form[BlogForm.Data])(implicit request: RequestHeader, messages: Messages, webJarAssets: WebJarAssets)
+@(user: models.User, blogForm: Form[BlogForm.Data])(implicit request: RequestHeader, messages: Messages, webJarAssets: WebJarAssets)
 
 @import b3.inline.fieldConstructor
 
-@main(Messages("blog.title")) {
+@main(Messages("blog.title"), Some(user)) {
   <fieldset class="col-md-6 col-md-offset-3">
     <legend>@Messages("blog.post")</legend>
     @helper.form(action = controllers.blog.routes.BlogController.submit()) {

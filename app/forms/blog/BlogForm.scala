@@ -18,7 +18,7 @@ object BlogForm {
   val form = Form(
     mapping(
       "title" -> nonEmptyText,
-      "context" -> nonEmptyText
+      "content" -> nonEmptyText
     )(Data.apply)(Data.unapply)
   )
 
@@ -26,10 +26,10 @@ object BlogForm {
    * The blog data.
    *
    * @param title The title of a blog post
-   * @param context The context of a blog post
+   * @param content The context of a blog post
    */
   case class Data(
     title: String,
-    context: String
+    content: String
   )
 }
