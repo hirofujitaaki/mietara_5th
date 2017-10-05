@@ -8,7 +8,7 @@
    https://stackoverflow.com/questions/1199468/what-is-the-difference-between-character-varying-and-varchar-in-postgresql */
 
 /* about SERIAL
-https://stackoverflow.com/questions/18389537/does-postgresql-serial-work-differently
+   https://stackoverflow.com/questions/18389537/does-postgresql-serial-work-differently
    use None to have DB handle it properly */
 
 /* about data Drop
