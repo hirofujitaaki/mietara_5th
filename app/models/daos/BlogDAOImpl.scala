@@ -34,7 +34,7 @@ class BlogDAOImpl @Inject() (protected val dbConfigProvider: DatabaseConfigProvi
    */
   def save(blog: Blog): Future[Int] = {
     db.run(
-      blogs += DbBlog(blog.title, blog.content, blog.userID.toString, blog.createdAt.toString))
+      blogs += DbBlog(blog.id, blog.title, blog.content, blog.userID.toString, blog.createdAt.toString))
   }
 
   // db.run((
