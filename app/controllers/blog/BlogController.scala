@@ -55,8 +55,9 @@ class BlogController @Inject() (
     BlogForm.form.bindFromRequest.fold(
       form => Future.successful(BadRequest(views.html.blog.blog(request.identity, form))),
       data => {
-        blogService.create(data.title, data.content, request.identity)
-        Future.successful(Ok(views.html.index(Some(request.identity))))
+        blogService.create(data.title, data.content, request.identity).map { res =>
+          Ok(views.html.index(Some(request.identity)))
+        }
       }
     )
   }

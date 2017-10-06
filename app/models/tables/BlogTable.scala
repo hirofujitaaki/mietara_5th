@@ -33,7 +33,7 @@ class BlogTable(tag: Tag) extends Table[DbBlog](tag, "blogs") {
 
   def content: Rep[String] = column[String]("content")
 
-  def userID: Rep[String] = column[String]("uesr_id")
+  def userID: Rep[String] = column[String]("user_id")
 
   def createdAt: Rep[String] = column[String]("created_at")
 
