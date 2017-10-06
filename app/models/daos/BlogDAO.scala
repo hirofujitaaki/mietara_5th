@@ -17,5 +17,5 @@ trait BlogDAO {
    * @param blog The blog to save.
    * @return The saved blog.
    */
-  def save(blog: Blog): Future[Int]
+  def save(blog: Blog): Future[Blog]
 }

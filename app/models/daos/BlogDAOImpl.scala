@@ -32,14 +32,11 @@ class BlogDAOImpl @Inject() (protected val dbConfigProvider: DatabaseConfigProvi
    * @param blog The blog to save.
    * @return The saved blog.
    */
-  def save(blog: Blog): Future[Int] = {
-    db.run(
-      blogs += DbBlog(blog.id, blog.title, blog.content, blog.userID.toString, blog.createdAt.toString))
+  def save(blog: Blog): Future[Blog] = {
+    db.run((
+      blogs returning blogs.map(_.id) into ((blog, id) => blog.copy(id = id))
+    ) += DbBlog(blog.id, blog.title, blog.content, blog.userID.toString, blog.createdAt.toString)).map { _ => blog }
   }
-
-  // db.run((
-  //   blogs returning blogs.map(_.id) into ((blog, id) => blog.copy(id = id))
-  // ) += DbBlog(blog.id, blog.title, blog.content, blog.userID.toString, blog.createdAt.toString)).map { _ => blog }
 }
 
 /**
