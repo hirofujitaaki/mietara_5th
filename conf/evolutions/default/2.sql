@@ -1,7 +1,7 @@
 # --- !Ups
 
 CREATE TABLE blogs (
-  id BIGSERIAL NOT NULL,
+  id BIGSERIAL NOT NULL PRIMARY KEY,
   title VARCHAR NOT NULL,
   content VARCHAR NOT NULL,
   user_id VARCHAR NOT NULL,

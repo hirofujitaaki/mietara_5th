@@ -56,7 +56,6 @@ class SignInController @Inject() (
   def view: Action[AnyContent] = silhouette.UnsecuredAction.async { implicit request =>
     Future.successful(Ok(views.html.auth.signIn(SignInForm.form, socialProviderRegistry)))
   }
-
   /**
    * Handles the submitted form.
    *

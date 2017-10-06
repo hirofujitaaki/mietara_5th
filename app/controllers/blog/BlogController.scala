@@ -9,7 +9,7 @@ import com.mohiva.play.silhouette.api.repositories.AuthInfoRepository
 import com.mohiva.play.silhouette.api.services.AvatarService
 import com.mohiva.play.silhouette.api.util.PasswordHasherRegistry
 import com.mohiva.play.silhouette.impl.providers._
-import controllers.{ WebJarAssets, auth }
+import controllers.{ WebJarAssets, blog }
 import forms.blog.BlogForm
 import models.User
 import models.Blog
@@ -55,8 +55,9 @@ class BlogController @Inject() (
     BlogForm.form.bindFromRequest.fold(
       form => Future.successful(BadRequest(views.html.blog.blog(request.identity, form))),
       data => {
-        blogService.create(data.title, data.content, request.identity)
-        Future.successful(Ok(views.html.index(Some(request.identity))))
+        blogService.create(data.title, data.content, request.identity).map { res =>
+          Redirect(blog.routes.BlogController.view())
+        }
       }
     )
   }
