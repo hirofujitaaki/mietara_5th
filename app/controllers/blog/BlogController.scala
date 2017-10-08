@@ -43,7 +43,9 @@ class BlogController @Inject() (
    * @return The result to display.
    */
   def view: Action[AnyContent] = silhouette.SecuredAction.async { implicit request =>
-    Future.successful(Ok(views.html.blog.blog(request.identity, BlogForm.form)))
+    blogService.retrieve(request.identity).map { blogOption =>
+      Ok(views.html.blog.blog(request.identity, BlogForm.form, blogOption))
+    }
   }
 
   /**
@@ -53,7 +55,8 @@ class BlogController @Inject() (
    */
   def submit: Action[AnyContent] = silhouette.SecuredAction.async { implicit request =>
     BlogForm.form.bindFromRequest.fold(
-      form => Future.successful(BadRequest(views.html.blog.blog(request.identity, form))),
+      //?? temporary None is used as a parameter
+      form => Future.successful(BadRequest(views.html.blog.blog(request.identity, form, None))),
       data => {
         blogService.create(data.title, data.content, request.identity).map { res =>
           Redirect(blog.routes.BlogController.view())

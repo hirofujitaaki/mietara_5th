@@ -4,6 +4,7 @@ import java.util.UUID
 import javax.inject.Inject
 
 import models.Blog
+import models.User
 import models.daos.BlogDAOImpl._
 import models.tables.{ BlogTable, DbBlog }
 import org.joda.time.DateTime
@@ -25,6 +26,23 @@ class BlogDAOImpl @Inject() (protected val dbConfigProvider: DatabaseConfigProvi
   val db: JdbcBackend#DatabaseDef = dbConfig.db
 
   import dbConfig.driver.api._
+
+  /**
+   * Finds posts by the user
+   *
+   * @param user The user by whom the retrieving posts are created.
+   * @return The found posts or None if no posts for the given user are found.
+   */
+
+  def find(user: User): Future[Option[Seq[Blog]]] = {
+    val blogQuery: Query[BlogTable, DbBlog, Seq] = blogs.filter(_.userID === user.userID.toString).sortBy(_.createdAt.desc)
+    db.run(blogQuery.result).map { dbBlogSeq =>
+      Some(dbBlogSeq).map { dbBlogSeq =>
+        dbBlogSeq.map { dbBlog => Blog(None, dbBlog.title, dbBlog.content, UUID.fromString(dbBlog.userID), DateTime.parse(dbBlog.createdAt))
+        }
+      }
+    }
+  }
 
   /**
    * Saves a post.

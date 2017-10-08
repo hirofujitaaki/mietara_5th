@@ -12,6 +12,14 @@ import scala.concurrent.Future
 trait BlogService {
 
   /**
+   * Retrieves blogs created by a specific user.
+   *
+   * @param user the user who created the retrieving posts
+   * @return The retrieved posts or None if no posts are retrieved for the given user.
+   */
+  def retrieve(user: User): Future[Option[Seq[Blog]]]
+
+  /**
    * Creates a new post and saves it in the backing store.
    *
    * @param title The title of the post.
