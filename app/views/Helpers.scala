@@ -27,7 +27,10 @@ object Helpers {
         new PeriodFormatterBuilder().appendSeconds().appendSuffix(" seconds ago\n").printZeroNever().toFormatter()
     }
 
-    formatter.print(period)
+    if (formatter.print(period) == "")
+      "posted now"
+    else
+      formatter.print(period)
   }
 }
 
