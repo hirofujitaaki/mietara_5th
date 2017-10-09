@@ -1,4 +1,6 @@
 @import forms.blog.BlogForm
+@import views.Helpers.timeElapsed
+
 @(user: models.User, blogForm: Form[BlogForm.Data], posts: Seq[Blog])(implicit request: RequestHeader, messages: Messages, webJarAssets: WebJarAssets)
 
 @import b3.inline.fieldConstructor
@@ -23,7 +25,7 @@
     @for(post <- posts) {
       <div> @post.title </div>
       <div> @post.content </div>
-      <div> @post.createdAt </div>
+      <h3> @timeElapsed(post.createdAt) </h3>
       <hr>
     }
   </fieldset>
