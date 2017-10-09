@@ -17,7 +17,7 @@ trait BlogDAO {
    * @param user The user by whom the retrieving posts are created.
    * @return The found posts or None if no posts for the given user are found.
    */
-  def find(user: User): Future[Option[Seq[Blog]]]
+  def find(user: User): Future[Seq[Blog]]
 
   /**
    * Saves a blog.

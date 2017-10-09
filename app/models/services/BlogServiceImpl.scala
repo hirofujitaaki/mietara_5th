@@ -28,7 +28,7 @@ class BlogServiceImpl @Inject() (blogDAO: BlogDAO, clock: Clock) extends BlogSer
    * @param user the user who created the retrieving posts
    * @return The retrieved posts or None if no posts are retrieved for the given user.
    */
-  def retrieve(user: User): Future[Option[Seq[Blog]]] = blogDAO.find(user)
+  def retrieve(user: User): Future[Seq[Blog]] = blogDAO.find(user)
 
   /**
    * Creates a new post and saves it in the backing store.

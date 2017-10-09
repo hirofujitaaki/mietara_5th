@@ -43,8 +43,8 @@ class BlogController @Inject() (
    * @return The result to display.
    */
   def view: Action[AnyContent] = silhouette.SecuredAction.async { implicit request =>
-    blogService.retrieve(request.identity).map { blogOption =>
-      Ok(views.html.blog.blog(request.identity, BlogForm.form, blogOption))
+    blogService.retrieve(request.identity).map { blogSeq =>
+      Ok(views.html.blog.blog(request.identity, BlogForm.form, blogSeq))
     }
   }
 
@@ -55,8 +55,8 @@ class BlogController @Inject() (
    */
   def submit: Action[AnyContent] = silhouette.SecuredAction.async { implicit request =>
     BlogForm.form.bindFromRequest.fold(
-      form => blogService.retrieve(request.identity).map { blogOption =>
-        BadRequest(views.html.blog.blog(request.identity, form, blogOption))
+      form => blogService.retrieve(request.identity).map { blogSeq =>
+        BadRequest(views.html.blog.blog(request.identity, form, blogSeq))
       },
       data => blogService.create(data.title, data.content, request.identity).map { res =>
         Redirect(blog.routes.BlogController.view())

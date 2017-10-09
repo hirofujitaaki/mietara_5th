@@ -17,7 +17,7 @@ trait BlogService {
    * @param user the user who created the retrieving posts
    * @return The retrieved posts or None if no posts are retrieved for the given user.
    */
-  def retrieve(user: User): Future[Option[Seq[Blog]]]
+  def retrieve(user: User): Future[Seq[Blog]]
 
   /**
    * Creates a new post and saves it in the backing store.

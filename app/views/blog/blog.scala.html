@@ -1,5 +1,5 @@
 @import forms.blog.BlogForm
-@(user: models.User, blogForm: Form[BlogForm.Data], posts: Option[Seq[Blog]])(implicit request: RequestHeader, messages: Messages, webJarAssets: WebJarAssets)
+@(user: models.User, blogForm: Form[BlogForm.Data], posts: Seq[Blog])(implicit request: RequestHeader, messages: Messages, webJarAssets: WebJarAssets)
 
 @import b3.inline.fieldConstructor
 
@@ -20,12 +20,11 @@
   </fieldset>
   <fieldset class="col-md-8">
     <legend>@Messages("blog.feed")</legend>
-    @posts.map { postSeq =>
-                  @for(post <- postSeq) {
-                  <div> @post.title </div>
-                  <div> @post.content </div>
-                  <div> @post.createdAt </div>
-                  }
-                }
+    @for(post <- posts) {
+      <div> @post.title </div>
+      <div> @post.content </div>
+      <div> @post.createdAt </div>
+      <hr>
+    }
   </fieldset>
   }
