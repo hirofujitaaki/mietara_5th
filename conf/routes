@@ -29,6 +29,8 @@ GET         /account/profile                 controllers.pages.AccountController
 GET         /blog                            controllers.blog.BlogController.view
 POST        /blog                            controllers.blog.BlogController.submit
 
+GET         /user/:userID                    controllers.user.UserController.view(userID: java.util.UUID)
+
 # Map static resources from the /public folder to the /assets URL path
 # about WebJars
 # https://adtech.cyberagent.io/scalablog/2016/09/30/play-framework-with-webjars-で管理画面をサクッと作ってみる/

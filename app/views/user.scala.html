@@ -1,0 +1,42 @@
+@import views.Helpers.timeElapsed
+
+@(user: Option[models.User] = None, targetUser: models.User, targetPosts: Seq[Blog])(implicit request: RequestHeader, messages: Messages, webJarAssets: WebJarAssets)
+
+
+
+@main(Messages("blog.title"), user) {
+
+  <fieldset class="col-md-4">
+    <legend>@Messages("targetUser.profile")</legend>
+        <div class="row">
+            <hr class="col-md-4" />
+            <div class="col-md-4 text-left">
+                <img src="@targetUser.avatarURL.getOrElse(routes.Assets.at("images/silhouette.png"))" height="40px" />
+            </div>
+            <hr class="col-md-4" />
+        </div>
+        <div class="row data">
+            <div class="col-md-4">
+                <div class="row">
+                    <p class="col-md-4"><strong>@Messages("first.name"):</strong></p><p class="col-md-6">@targetUser.firstName.getOrElse("None")</p>
+                </div>
+                <div class="row">
+                    <p class="col-md-4"><strong>@Messages("last.name"):</strong></p><p class="col-md-6">@targetUser.lastName.getOrElse("None")</p>
+                </div>
+            </div>
+        </div>
+  </fieldset>
+
+  <fieldset class="col-md-8">
+    <legend>@Messages("targetBlog.feed")</legend>
+    @for(targetPost <- targetPosts) {
+      <div> @targetPost.title </div>
+      <div> @targetPost.content </div>
+      <h3> @timeElapsed(targetPost.createdAt) </h3>
+      <hr>
+    }
+  </fieldset>
+}
+
+
+
