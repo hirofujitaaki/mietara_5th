@@ -31,6 +31,17 @@ class UserDAOImpl @Inject() (protected val dbConfigProvider: DatabaseConfigProvi
   }
 
   /**
+   * Finds all the users for indexing
+   *
+   */
+  def findAll: Future[Seq[User]] = {
+    val dbUsers: Future[Seq[DbUser]] = db.run(users.result)
+    dbUsers.map { dbUserSeq =>
+      dbUserSeq.flatMap { dbUser => find(UUID.fromString(dbUser.userID)).value.get.get }
+    }
+  }
+
+  /**
    * Finds a user by its login info.
    *
    * @param loginInfo The login info of the user to find.

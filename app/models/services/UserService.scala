@@ -14,6 +14,11 @@ import scala.concurrent.Future
 trait UserService extends IdentityService[User] {
 
   /**
+   * Retrieves all the users for indexing.
+   */
+  def retrieveAll: Future[Seq[User]]
+
+  /**
    * Retrieves a user that matches the specified ID.
    *
    * @param id The ID to retrieve a user.

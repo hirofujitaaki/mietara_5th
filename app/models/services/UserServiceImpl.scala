@@ -19,6 +19,11 @@ import scala.concurrent.Future
 class UserServiceImpl @Inject() (userDAO: UserDAO) extends UserService {
 
   /**
+   * Retrieves all the users for indexing.
+   */
+  def retrieveAll: Future[Seq[User]] = userDAO.findAll
+
+  /**
    * Retrieves a user that matches the specified ID.
    *
    * @param id The ID to retrieve a user.

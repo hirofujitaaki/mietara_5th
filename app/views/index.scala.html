@@ -1,10 +1,16 @@
-@(user: Option[models.User] = None)(implicit request: RequestHeader, messages: Messages, webJarAssets: WebJarAssets)
+@(user: Option[models.User] = None, usersIndexing: Seq[User])(implicit request: RequestHeader, messages: Messages, webJarAssets: WebJarAssets)
 
 @main(Messages("index.title"), user) {
-    <fieldset class="col-md-6 col-md-offset-3">
-        <div class="info">
-          <p>implement index page.</p>
-        </div>
-    </fieldset>
+<div class="row">
+  <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+    <div class="thumbnail">
+      <img src="thumb1.png" alt="...">
+      <div class="caption">
+        <h3>Hamburger</h3>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+        <p><a href="#" class="btn btn-primary" role="button">Add to Cart</a></p>
+      </div>
+      </div>
+  </div>
+</div>
 }
-

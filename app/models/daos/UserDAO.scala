@@ -17,6 +17,12 @@ trait UserDAO {
   def loginInfoQuery(loginInfo: LoginInfo): Query[LoginInfoTable, DbLoginInfo, Seq]
 
   /**
+   * Finds all the users for indexing
+   *
+   */
+  def findAll: Future[Seq[User]]
+
+  /**
    * Finds a user by its login info.
    *
    * @param loginInfo The login info of the user to find.
