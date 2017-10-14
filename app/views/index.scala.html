@@ -1,3 +1,5 @@
+@import views.Helpers._
+
 @(user: Option[models.User] = None, usersIndexing: Seq[User])(implicit request: RequestHeader, messages: Messages, webJarAssets: WebJarAssets)
 
 @main(Messages("index.title"), user) {
@@ -5,10 +7,10 @@
   @for(userIndex <- usersIndexing) {
     <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
       <div class="thumbnail">
-        <div> @userIndex.name </div>
+        <h4 style="text-align:center"><a href="@controllers.user.routes.UserController.view(userIndex.userID)"> @userIndex.name </a></h4>
         <img src="thumb1.png" alt="...">
         <div class="caption">
-          <h3>Hamburger</h3>
+          <h4>Hamburger</h4>
           <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
           <p><a href="#" class="btn btn-primary" role="button">Add to Cart</a></p>
         </div>
