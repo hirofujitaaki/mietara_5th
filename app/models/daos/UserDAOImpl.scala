@@ -2,6 +2,7 @@ package models.daos
 
 import java.util.UUID
 import javax.inject.Inject
+import scala.util.{ Try, Success, Failure }
 
 import com.mohiva.play.silhouette.api.LoginInfo
 import models.User
@@ -35,9 +36,15 @@ class UserDAOImpl @Inject() (protected val dbConfigProvider: DatabaseConfigProvi
    *
    */
   def findAll: Future[Seq[User]] = {
-    val dbUsers: Future[Seq[DbUser]] = db.run(users.result)
-    dbUsers.map { dbUserSeq =>
-      dbUserSeq.flatMap { dbUser => find(UUID.fromString(dbUser.userID)).value.get.get }
+    db.run(users.result).map { dbUserSeq =>
+      dbUserSeq.map { dbUser =>
+        val userFut = find(UUID.fromString(dbUser.userID))
+        Thread.sleep(10000)
+        userFut.value.get match {
+          case Success(Some(usr: User)) => usr
+          case _ => throw new RuntimeException
+        }
+      }
     }
   }
 

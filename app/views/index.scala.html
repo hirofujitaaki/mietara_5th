@@ -2,15 +2,18 @@
 
 @main(Messages("index.title"), user) {
 <div class="row">
-  <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
-    <div class="thumbnail">
-      <img src="thumb1.png" alt="...">
-      <div class="caption">
-        <h3>Hamburger</h3>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-        <p><a href="#" class="btn btn-primary" role="button">Add to Cart</a></p>
-      </div>
-      </div>
-  </div>
+  @for(userIndex <- usersIndexing) {
+    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+      <div class="thumbnail">
+        <div> @userIndex.name </div>
+        <img src="thumb1.png" alt="...">
+        <div class="caption">
+          <h3>Hamburger</h3>
+          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+          <p><a href="#" class="btn btn-primary" role="button">Add to Cart</a></p>
+        </div>
+        </div>
+    </div>
+  }
 </div>
 }
