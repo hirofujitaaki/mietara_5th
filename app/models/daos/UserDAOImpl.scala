@@ -15,7 +15,8 @@ import slick.jdbc.JdbcBackend
 import slick.lifted.TableQuery
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.duration.Duration
+import scala.concurrent.{ Future, Await }
 
 /**
  * Give access to the user object.
@@ -38,9 +39,8 @@ class UserDAOImpl @Inject() (protected val dbConfigProvider: DatabaseConfigProvi
   def findAll: Future[Seq[User]] = {
     db.run(users.result).map { dbUserSeq =>
       dbUserSeq.map { dbUser =>
-        val userFut = find(UUID.fromString(dbUser.userID))
-        Thread.sleep(10000)
-        userFut.value.get match {
+        val userFut: Future[Option[User]] = find(UUID.fromString(dbUser.userID))
+        Await.ready(userFut, Duration.Inf).value.get match {
           case Success(Some(usr: User)) => usr
           case _ => throw new RuntimeException
         }
