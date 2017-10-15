@@ -34,18 +34,15 @@ class UserDAOImpl @Inject() (protected val dbConfigProvider: DatabaseConfigProvi
 
   /**
    * Finds all the users for indexing
-   *
    */
   def findAll: Future[Seq[User]] = {
-    db.run(users.result).map { dbUserSeq =>
-      dbUserSeq.map { dbUser =>
-        val userFut: Future[Option[User]] = find(UUID.fromString(dbUser.userID))
-        Await.ready(userFut, Duration.Inf).value.get match {
-          case Success(Some(usr: User)) => usr
-          case _ => throw new RuntimeException
-        }
-      }
-    }
+    db.run(users.result)
+      .map(dbUserSeq =>
+        Future.sequence(dbUserSeq.map(dbUser => find(UUID.fromString(dbUser.userID))))
+      )
+      .flatMap(userFutSeq => // userFutSeq is a Future[Seq[Option[User]]]
+        userFutSeq.map(userSeq => userSeq.collect { case Some(u) => u })
+      )
   }
 
   /**
